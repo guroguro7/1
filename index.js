@@ -1,102 +1,49 @@
-const product = [
-    {
-        id: 0,
-        image: '/X4NhRoO0.jpeg',
-        title: 'Z Flip Foldable Mobile',
-        price: 1000,
-    },
-    {
-        id: 1,
-        image: '/download.jpg',
-        title: ' iphone 14 pro',
-        price: 1100,
-    },
-    {
-        id: 2,
-        image: '/gopro.jpg',
-        title: 'goPro 10',
-        price: 100,
-    },
-    {
-        id: 3,
-        image: '/airpods.jpg',
-        title: 'airpods pro',
-        price: 100,
-    },
-    {
-        id: 4,
-        image:'/ipad.jpg',
-        title:'ipad pro',
-        price:'900'
-    },
-    {
-        id:5,
-        image:'/macbook.jpg',
-        title:'macbook pro',
-        price:'1200'
-         
-            
-    }
+//step 1: get DOM
+let nextDom = document.getElementById('next');
+let prevDom = document.getElementById('prev');
 
+let carouselDom = document.querySelector('.carousel');
+let SliderDom = carouselDom.querySelector('.carousel .list');
+let thumbnailBorderDom = document.querySelector('.carousel .thumbnail');
+let thumbnailItemsDom = thumbnailBorderDom.querySelectorAll('.item');
+let timeDom = document.querySelector('.carousel .time');
 
-];
-const categories = [...new Set(product.map((item)=>
-    {return item}))]
-    let i=0;
-document.getElementById('root').innerHTML = categories.map((item)=>
-{
-    var {image, title, price} = item;
-    return(
-        `<div class='box'>
-            <div class='img-box'>
-                <img class='images' src=${image}></img>
-            </div>
-        <div class='bottom'>
-        <p>${title}</p>
-        <h2>$ ${price}.00</h2>`+
-        "<button onclick='addtocart("+(i++)+")'>Add to cart</button>"+
-        `</div>
-        </div>`
-    )
-}).join('')
+thumbnailBorderDom.appendChild(thumbnailItemsDom[0]);
+let timeRunning = 3000;
+let timeAutoNext = 7000;
 
-var cart =[];
-
-function addtocart(a){
-    cart.push({...categories[a]});
-    displaycart();
-}
-function delElement(a){
-    cart.splice(a, 1);
-    displaycart();
+nextDom.onclick = function(){
+    showSlider('next');    
 }
 
-function displaycart(){
-    let j = 0, total=0;
-    document.getElementById("count").innerHTML=cart.length;
-    if(cart.length==0){
-        document.getElementById('cartItem').innerHTML = "Your cart is empty";
-        document.getElementById("total").innerHTML = "$ "+0+".00";
-    }
-    else{
-        document.getElementById("cartItem").innerHTML = cart.map((items)=>
-        {
-            var {image, title, price} = items;
-            total=total+price;
-            document.getElementById("total").innerHTML = "$ "+total+".00";
-            return(
-                `<div class='cart-item'>
-                <div class='row-img'>
-                    <img class='rowimg' src=${image}>
-                </div>
-                <p style='font-size:12px;'>${title}</p>
-                <h2 style='font-size: 15px;'>$ ${price}.00</h2>`+
-                "<i class='fa-solid fa-trash' onclick='delElement("+ (j++) +")'></i></div>"
-            );
-        }).join('');
-    }
-
+prevDom.onclick = function(){
+    showSlider('prev');    
+}
+let runTimeOut;
+let runNextAuto = setTimeout(() => {
+    next.click();
+}, timeAutoNext)
+function showSlider(type){
+    let  SliderItemsDom = SliderDom.querySelectorAll('.carousel .list .item');
+    let thumbnailItemsDom = document.querySelectorAll('.carousel .thumbnail .item');
     
+    if(type === 'next'){
+        SliderDom.appendChild(SliderItemsDom[0]);
+        thumbnailBorderDom.appendChild(thumbnailItemsDom[0]);
+        carouselDom.classList.add('next');
+    }else{
+        SliderDom.prepend(SliderItemsDom[SliderItemsDom.length - 1]);
+        thumbnailBorderDom.prepend(thumbnailItemsDom[thumbnailItemsDom.length - 1]);
+        carouselDom.classList.add('prev');
+    }
+    clearTimeout(runTimeOut);
+    runTimeOut = setTimeout(() => {
+        carouselDom.classList.remove('next');
+        carouselDom.classList.remove('prev');
+    }, timeRunning);
+
+    clearTimeout(runNextAuto);
+    runNextAuto = setTimeout(() => {
+        next.click();
+    }, timeAutoNext)
 }
-
-
